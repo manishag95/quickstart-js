@@ -28,8 +28,35 @@ limitations under the License.
   <link rel="stylesheet" href="main.css">
 
   <link rel="manifest" href="/manifest.json">
+  
+     <script type="text/javascript"
+        src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+
+    <script type="text/javascript">
+        var viz;
+
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                url = "http://public.tableau.com/views/RegionalSampleWorkbook/College",
+                options = {
+                    "Academic Year": "",
+                    hideTabs: true
+                };
+
+            viz = new tableau.Viz(containerDiv, url, options);
+        }
+
+        function yearFilter(year) {
+            var sheet = viz.getWorkbook().getActiveSheet();
+            if (year === "") {
+                sheet.clearFilterAsync("Academic Year");
+            } else {
+                sheet.applyFilterAsync("Academic Year", year, tableau.FilterUpdateType.REPLACE);
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="initViz();">
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
   <!-- Header section containing title -->
@@ -71,6 +98,14 @@ limitations under the License.
     </div>
   </main>
 </div>
+      <div id="vizContainer" style="width:800px; height:700px;"></div>
+    <div id="controls" style="padding:20px;">
+        Year: <select id="changeYear" onchange="yearFilter(value);">
+            <option value="">All</option>
+            <option value="2013">2013</option>
+            <option value="2014">2014</option>
+        </select>
+    </div>
 
 <!-- Import and configure the Firebase SDK -->
 <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
